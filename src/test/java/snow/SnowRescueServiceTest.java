@@ -67,4 +67,46 @@ public class SnowRescueServiceTest {
         //then
         verify(municipalServices, never()).sendSander();
     }
+
+    @Test
+    public void shouldSendSnowplowBecauseOfSnowFallHeightEquals4() {
+        //given
+        int snowFallHeightInMM = 4;
+
+        when(weatherForecastService.getSnowFallHeightInMM()).thenReturn(snowFallHeightInMM);
+
+        //when
+        snowRescueService.checkForecastAndRescue();
+
+        //then
+        verify(municipalServices).sendSnowplow();
+    }
+
+    @Test
+    public void shouldNotSendSnowplowBecauseOfSnowFallHeightEquals2() {
+        //given
+        int snowFallHeightInMM = 2;
+
+        when(weatherForecastService.getSnowFallHeightInMM()).thenReturn(snowFallHeightInMM);
+
+        //when
+        snowRescueService.checkForecastAndRescue();
+
+        //then
+        verify(municipalServices, never()).sendSnowplow();
+    }
+
+    @Test
+    public void shouldNotSendSnowplowBecauseOfSnowFallHeightEquals3() {
+        //given
+        int snowFallHeightInMM = 3;
+
+        when(weatherForecastService.getSnowFallHeightInMM()).thenReturn(snowFallHeightInMM);
+
+        //when
+        snowRescueService.checkForecastAndRescue();
+
+        //then
+        verify(municipalServices, never()).sendSnowplow();
+    }
 }
