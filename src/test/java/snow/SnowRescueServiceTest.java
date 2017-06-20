@@ -2,12 +2,16 @@ package snow;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import snow.dependencies.MunicipalServices;
 import snow.dependencies.PressService;
+import snow.dependencies.SnowplowMalfunctioningException;
 import snow.dependencies.WeatherForecastService;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -108,5 +112,20 @@ public class SnowRescueServiceTest {
 
         //then
         verify(municipalServices, never()).sendSnowplow();
+    }
+
+    @Test
+    public void shouldSendNewSnowplowBecauseOfSnowplowMalfunctioningException() {
+        //given
+        int snowFallHeightInMM = 4;
+
+        when(weatherForecastService.getSnowFallHeightInMM()).thenReturn(snowFallHeightInMM);
+        doThrow(SnowplowMalfunctioningException.class).doNothing().when(municipalServices).sendSnowplow();
+
+        //when
+        snowRescueService.checkForecastAndRescue();
+
+        //then
+        verify(municipalServices, times(2)).sendSnowplow();
     }
 }

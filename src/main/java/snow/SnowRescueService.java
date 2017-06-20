@@ -2,6 +2,7 @@ package snow;
 
 import snow.dependencies.MunicipalServices;
 import snow.dependencies.PressService;
+import snow.dependencies.SnowplowMalfunctioningException;
 import snow.dependencies.WeatherForecastService;
 
 public class SnowRescueService {
@@ -20,6 +21,19 @@ public class SnowRescueService {
 
         if (averageTemperatureInCelsius < 0) {
             municipalServices.sendSander();
+        }
+
+        int snowFallHeightInMM = weatherForecastService.getSnowFallHeightInMM();
+        if (snowFallHeightInMM > 3) {
+            sendSnowplot();
+        }
+    }
+
+    private void sendSnowplot() {
+        try {
+            municipalServices.sendSnowplow();
+        } catch (SnowplowMalfunctioningException e) {
+            municipalServices.sendSnowplow();
         }
     }
 }
